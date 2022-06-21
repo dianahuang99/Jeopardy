@@ -1,0 +1,36 @@
+/* some colors you may find useful:
+  #115ff4
+  #060ce9
+  #28a200
+  #8d2ab5
+  #74119c
+*/
+
+/* table,
+th,
+td {
+  border: 1px solid black;
+  border-collapse: collapse;
+} */
+
+table,
+th,
+td {
+  border: 1px solid white;
+  border-collapse: collapse;
+}
+th,
+td {
+  background-color: #96d4d4;
+}
+
+td {
+  width: 150px;
+  height: 120px;
+  text-align: center;
+}
+th {
+  width: 150px;
+  height: 50px;
+  text-align: center;
+}
