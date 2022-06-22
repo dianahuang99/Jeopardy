@@ -69,7 +69,7 @@ async function retrieveCategories() {
  *   ]
  */
 $("body").append(
-  '<button onClick="document.location.reload(true)">Reset</button>'
+  '<button onClick="document.location.reload(true)">Reset Board</button>'
 );
 
 async function getCategory(catId) {
