@@ -46,6 +46,8 @@ th {
   text-transform: capitalize;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  padding-right: 7px;
+  padding-left: 7px;
 }
 
 button {
