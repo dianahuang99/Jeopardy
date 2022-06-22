@@ -28,7 +28,7 @@ function sortArray(arr) {
 }
 
 async function retrieveCategories() {
-  const res = await axios.get("https://jservice.io/api/categories?count=100");
+  const res = await axios.get("https://jservice.io/api/categories?count=10000");
   sortArray(res.data);
   return res.data;
 }
@@ -68,6 +68,9 @@ async function retrieveCategories() {
  *      ...
  *   ]
  */
+$("body").append(
+  '<button onClick="document.location.reload(true)">Reset</button>'
+);
 
 async function getCategory(catId) {
   const questions = await axios.get(
