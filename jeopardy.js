@@ -17,6 +17,12 @@
 //    },
 //    ...
 //  ]
+
+// $('.col1').each(function(el, item){
+//     if(item.innerText === '?'){
+//     item.innerText = 'bye'}
+//         })
+
 function sortArray(arr) {
   return arr.sort(() => Math.random() - 0.5);
 }
@@ -26,30 +32,31 @@ async function retrieveCategories() {
   sortArray(res.data);
   return res.data;
 }
-async function retrieveCategoryNames() {
-  const res = await retrieveCategories();
-  const categoryNamesArr = [];
-  for (let category of res) {
-    categoryNamesArr.push(category.title);
-  }
-  return categoryNamesArr;
-}
+// retrieveCategories();
+// async function retrieveCategoryNames() {
+//   const res = await retrieveCategories();
+//   const categoryNamesArr = [];
+//   for (let category of res) {
+//     categoryNamesArr.push(category.title);
+//   }
+//   return categoryNamesArr;
+// }
 
-let categories = [];
+// let categories = [];
 
 /** Get NUM_CATEGORIES random category from API.
  *
  * Returns array of category ids
  */
 
-async function getCategoryIds() {
-  const categories = await retrieveCategories();
-  const categoryIDs = [];
-  for (let category of categories) {
-    categoryIDs.push(category.id);
-  }
-  return categoryIDs;
-}
+// async function getCategoryIds() {
+//   const categories = await retrieveCategories();
+//   const categoryIDs = [];
+//   for (let category of categories) {
+//     categoryIDs.push(category.id);
+//   }
+//   return categoryIDs;
+// }
 /** Return object with data about a category:
  *
  *  Returns { title: "Math", clues: clue-array }
@@ -66,7 +73,7 @@ async function getCategory(catId) {
   const questions = await axios.get(
     `https://jservice.io/api/category?id=${catId}`
   );
-  return questions.data;
+  return questions.data.clues;
 }
 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
@@ -77,7 +84,67 @@ async function getCategory(catId) {
  *   (initally, just show a "?" where the question/answer would go.)
  */
 
-async function fillTable() {}
+async function fillTable() {
+  const $gameBoard = $("<table>");
+  $gameBoard.attr("id", "game");
+  const categories = await retrieveCategories();
+  $gameBoard.append(`
+<thead>
+    <tr>
+    <th data-cat-id="${categories[0].id}" class="top cat1">${categories[0].title}</th>
+    <th data-cat-id="${categories[1].id}" class="top cat2">${categories[1].title}</th>
+    <th data-cat-id="${categories[2].id}" class="top cat3">${categories[2].title}</th>
+    <th data-cat-id="${categories[3].id}" class="top cat4">${categories[3].title}</th>
+    <th data-cat-id="${categories[4].id}" class="top cat5">${categories[4].title}</th>
+    <th data-cat-id="${categories[5].id}" class="top cat6">${categories[5].title}</th>
+    </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class='col0 row0'>?</td>
+    <td class='col1 row0'>?</td>
+    <td class='col2 row0'>?</td>
+    <td class='col3 row0'>?</td>
+    <td class='col4 row0'>?</td>
+    <td class='col5 row0'>?</td>
+  </tr>
+  <tr>
+    <td class='col0 row1'>?</td>
+    <td class='col1 row1'>?</td>
+    <td class='col2 row1'>?</td>
+    <td class='col3 row1'>?</td>
+    <td class='col4 row1'>?</td>
+    <td class='col5 row1'>?</td>
+  </tr>
+  <tr>
+    <td class='col0 row2'>?</td>
+    <td class='col1 row2'>?</td>
+    <td class='col2 row2'>?</td>
+    <td class='col3 row2'>?</td>
+    <td class='col4 row2'>?</td>
+    <td class='col5 row2'>?</td>
+  </tr>
+  <tr>
+    <td class='col0 row3'>?</td>
+    <td class='col1 row3'>?</td>
+    <td class='col2 row3'>?</td>
+    <td class='col3 row3'>?</td>
+    <td class='col4 row3'>?</td>
+    <td class='col5 row3'>?</td>
+  </tr
+  <tr>
+    <td class='col0 row4'>?</td>
+    <td class='col1 row4'>?</td>
+    <td class='col2 row4'>?</td>
+    <td class='col3 row4'>?</td>
+    <td class='col4 row4'>?</td>
+    <td class='col5 row4'>?</td>
+  </tr>
+</tbody>`);
+  $("body").prepend($gameBoard);
+
+  $("table").on("click", "td", handleClick);
+}
 
 /** Handle clicking on a clue: show the question or answer.
  *
@@ -87,7 +154,33 @@ async function fillTable() {}
  * - if currently "answer", ignore click
  * */
 
-function handleClick(evt) {}
+async function handleClick(evt) {
+  const th = $("th");
+  if ($(evt.target).text() === "?") {
+    for (let i = 0; i < 6; i++) {
+      if ($(evt.target).hasClass(`col${i}`)) {
+        const questions = await getCategory(th[i].getAttribute("data-cat-id"));
+        for (let y = 0; y < 5; y++) {
+          if ($(evt.target).hasClass(`row${y}`)) {
+            $(evt.target).text(`${questions[y].question}`);
+          }
+        }
+      }
+    }
+  } else {
+    for (let i = 0; i < 6; i++) {
+      if ($(evt.target).hasClass(`col${i}`)) {
+        const questions = await getCategory(th[i].getAttribute("data-cat-id"));
+        for (let y = 0; y < 5; y++) {
+          if ($(evt.target).hasClass(`row${y}`)) {
+            $(evt.target).text(`${questions[y].answer}`);
+          }
+        }
+      }
+    }
+  }
+  //   console.log($(evt.target).attr("class"));
+}
 
 /** Wipe the current Jeopardy board, show the loading spinner,
  * and update the button used to fetch data.
@@ -116,62 +209,4 @@ async function setupAndStart() {}
 
 // TODO
 
-async function makeBoard() {
-  const $gameBoard = $("<table>");
-  const categoryNames = await retrieveCategoryNames();
-  $gameBoard.append(`
-<thead>
-    <tr>
-    <th>${categoryNames[0]}</th>
-    <th>${categoryNames[1]}</th>
-    <th>${categoryNames[2]}</th>
-    <th>${categoryNames[3]}</th>
-    <th>${categoryNames[4]}</th>
-    <th>${categoryNames[5]}</th>
-    </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class='row1' >?</td>
-    <td class='row1'>?</td>
-    <td class='row1'>?</td>
-    <td class='row1'>?</td>
-    <td class='row1'>?</td>
-    <td class='row1'>?</td>
-  </tr>
-  <tr>
-    <td class='row2'>?</td>
-    <td class='row2'>?</td>
-    <td class='row2'>?</td>
-    <td class='row2'>?</td>
-    <td class='row2'>?</td>
-    <td class='row2'>?</td>
-  </tr>
-  <tr>
-    <td class='row3'>?</td>
-    <td class='row3'>?</td>
-    <td class='row3'>?</td>
-    <td class='row3'>?</td>
-    <td class='row3'>?</td>
-    <td class='row3'>?</td>
-  </tr>
-  <tr>
-    <td class='row4'>?</td>
-    <td class='row4'>?</td>
-    <td class='row4'>?</td>
-    <td class='row4'>?</td>
-    <td class='row4'>?</td>
-    <td class='row4'>?</td>
-  </tr>
-  <tr>
-    <td class='row5'>?</td>
-    <td class='row5'>?</td>
-    <td class='row5'>?</td>
-    <td class='row5'>?</td>
-    <td class='row5'>?</td>
-    <td class='row5'>?</td>
-  </tr>
-</tbody>`);
-  $("body").prepend($gameBoard);
-}
-makeBoard();
+fillTable();
